@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grupo Mercado Mayorista | Venta al público con retiro</title>
+    <style>
+        :root {
+            --bg: #f5f8fb;
+            --surface: #ffffff;
+            --text: #17192f;
+            --muted: #5c6477;
+            --blue: #287db8;
+            --navy: #292963;
+            --navy-dark: #171742;
+            --accent: #23a6df;
+            --line: #d9e2ec;
+            --shadow: 0 18px 45px rgba(23, 25, 47, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 14px clamp(18px, 4vw, 56px);
+            background: rgba(245, 248, 251, 0.94);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            line-height: 1.05;
+            text-transform: uppercase;
+        }
+
+        .brand img {
+            width: 86px;
+            height: auto;
+        }
+
+        .brand-text {
+            display: grid;
+            gap: 2px;
+        }
+
+        .brand small {
+            color: var(--blue);
+            font-size: 0.72rem;
+            letter-spacing: 0.12em;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        nav a {
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: var(--blue);
+        }
+
+        .nav-cta {
+            padding: 10px 14px;
+            border-radius: 6px;
+            background: var(--navy);
+            color: #ffffff;
+        }
+
+        .hero {
+            min-height: min(760px, 92vh);
+            display: grid;
+            align-items: end;
+            padding: clamp(26px, 5vw, 64px);
+            background:
+                linear-gradient(90deg, rgba(12, 15, 48, 0.9) 0%, rgba(21, 27, 72, 0.72) 46%, rgba(21, 27, 72, 0.2) 100%),
+                url("assets/distribuidora-hero.png") center / cover;
+        }
+
+        .hero-content {
+            width: min(760px, 100%);
+            padding-bottom: clamp(18px, 6vh, 58px);
+            color: #ffffff;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 18px;
+            color: #d8f2ff;
+            font-size: 0.82rem;
+            font-weight: 900;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+
+        .eyebrow::before {
+            content: "";
+            width: 34px;
+            height: 3px;
+            background: var(--accent);
+        }
+
+        h1,
+        h2,
+        h3,
+        p {
+            margin-top: 0;
+        }
+
+        h1 {
+            max-width: 700px;
+            margin-bottom: 18px;
+            font-size: clamp(2.35rem, 5vw, 5.2rem);
+            line-height: 0.98;
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin-bottom: 26px;
+            color: #eff8ff;
+            font-size: clamp(1rem, 1.6vw, 1.2rem);
+            line-height: 1.65;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .button {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 13px 18px;
+            border-radius: 6px;
+            background: var(--blue);
+            color: #ffffff;
+            font-weight: 900;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background: #1f6ea6;
+        }
+
+        .button.secondary {
+            background: #ffffff;
+            color: var(--navy);
+        }
+
+        .band {
+            padding: clamp(42px, 7vw, 86px) clamp(18px, 4vw, 56px);
+        }
+
+        .inner {
+            width: min(1120px, 100%);
+            margin: 0 auto;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            border: 1px solid var(--line);
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .stat {
+            min-height: 118px;
+            padding: 22px;
+            border-right: 1px solid var(--line);
+        }
+
+        .stat:last-child {
+            border-right: 0;
+        }
+
+        .stat strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--blue);
+            font-size: clamp(1.7rem, 3vw, 2.6rem);
+            line-height: 1;
+        }
+
+        .stat span {
+            color: var(--muted);
+            font-weight: 800;
+        }
+
+        .section-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            gap: 24px;
+            margin-bottom: 26px;
+        }
+
+        .section-head h2 {
+            max-width: 620px;
+            margin-bottom: 0;
+            font-size: clamp(1.8rem, 3vw, 3rem);
+            line-height: 1.08;
+        }
+
+        .section-head p {
+            max-width: 470px;
+            margin-bottom: 0;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        .categories {
+            background: #ffffff;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .category,
+        .step,
+        .contact-box {
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+        }
+
+        .category {
+            min-height: 170px;
+            display: grid;
+            align-content: space-between;
+            gap: 18px;
+            padding: 22px;
+            color: inherit;
+            text-decoration: none;
+            transition: border-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+        }
+
+        a.category:hover {
+            border-color: var(--blue);
+            box-shadow: 0 14px 32px rgba(40, 125, 184, 0.14);
+            transform: translateY(-2px);
+        }
+
+        .category .icon {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 6px;
+            background: #eef7ff;
+            color: var(--blue);
+            font-weight: 900;
+        }
+
+        .category h3,
+        .step h3,
+        .contact-box h3 {
+            margin-bottom: 8px;
+            font-size: 1.15rem;
+        }
+
+        .category p,
+        .step p,
+        .contact-box p {
+            margin-bottom: 0;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .split {
+            display: grid;
+            grid-template-columns: 0.95fr 1.05fr;
+            gap: clamp(24px, 5vw, 54px);
+            align-items: center;
+        }
+
+        .public-box {
+            padding: clamp(24px, 4vw, 44px);
+            background: var(--navy);
+            color: #ffffff;
+        }
+
+        .public-box h2 {
+            margin-bottom: 18px;
+            font-size: clamp(1.8rem, 3vw, 3rem);
+            line-height: 1.08;
+        }
+
+        .public-box p {
+            color: #e1eaff;
+            line-height: 1.7;
+        }
+
+        .check-list {
+            display: grid;
+            gap: 12px;
+            padding: 0;
+            margin: 22px 0 0;
+            list-style: none;
+        }
+
+        .check-list li {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            color: #f7fbff;
+            line-height: 1.45;
+        }
+
+        .check-list li::before {
+            content: "✓";
+            flex: 0 0 24px;
+            width: 24px;
+            height: 24px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--accent);
+            color: #ffffff;
+            font-weight: 900;
+        }
+
+        .steps {
+            display: grid;
+            gap: 12px;
+        }
+
+        .step {
+            padding: 22px;
+        }
+
+        .step-number {
+            width: 34px;
+            height: 34px;
+            display: inline-grid;
+            place-items: center;
+            margin-bottom: 14px;
+            border-radius: 6px;
+            background: var(--blue);
+            color: #ffffff;
+            font-weight: 900;
+        }
+
+        .contact {
+            background: var(--navy-dark);
+            color: #ffffff;
+        }
+
+        .contact .section-head p {
+            color: #cbd6e6;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .contact-box {
+            padding: 24px;
+            background: #24285f;
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .contact-box p,
+        .contact-box a {
+            color: #dce6ef;
+        }
+
+        .contact-box a {
+            font-weight: 900;
+            text-decoration: none;
+        }
+
+        footer {
+            padding: 22px clamp(18px, 4vw, 56px);
+            background: #101238;
+            color: #b9c5d3;
+            text-align: center;
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 860px) {
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            nav {
+                width: 100%;
+                overflow-x: auto;
+                padding-bottom: 4px;
+            }
+
+            .hero {
+                min-height: 720px;
+                background:
+                    linear-gradient(180deg, rgba(12, 15, 48, 0.82) 0%, rgba(21, 27, 72, 0.72) 62%, rgba(12, 15, 48, 0.94) 100%),
+                    url("assets/distribuidora-hero.png") center / cover;
+            }
+
+            .section-head,
+            .split {
+                display: grid;
+            }
+
+            .stats,
+            .grid,
+            .contact-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .stat:nth-child(2) {
+                border-right: 0;
+            }
+
+            .stat:nth-child(1),
+            .stat:nth-child(2) {
+                border-bottom: 1px solid var(--line);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .topbar {
+                position: static;
+            }
+
+            nav {
+                gap: 12px;
+                font-size: 0.88rem;
+            }
+
+            .hero {
+                min-height: 680px;
+                padding: 24px 18px;
+            }
+
+            .actions,
+            .button {
+                width: 100%;
+            }
+
+            .stats,
+            .grid,
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat,
+            .stat:nth-child(2) {
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+            }
+
+            .stat:last-child {
+                border-bottom: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <img src="assets/logo-gmm-cropped.png" alt="Grupo Mercado Mayorista">
+            <span class="brand-text">
+                Grupo Mercado Mayorista
+                <small>Venta al público con retiro</small>
+            </span>
+        </div>
+        <nav aria-label="Navegación principal">
+            <a href="#categorias">Productos</a>
+            <a href="#publico">Cómo comprar</a>
+            <a href="segunda.html">Catálogo</a>
+            <a class="nav-cta" href="segunda.html">Armar carrito</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <span class="eyebrow">Compra online y retiro por el local</span>
+                <h1>Grupo Mercado Mayorista, ahora abierto al público.</h1>
+                <p>Armá tu pedido desde el catálogo, envialo por WhatsApp y retiralo por el local cuando confirmemos stock, precio final y horario.</p>
+                <div class="actions">
+                    <a class="button" href="segunda.html">Armar carrito</a>
+                    <a class="button secondary" href="https://wa.link/eja7i2">Consultar por WhatsApp</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="band">
+            <div class="inner stats" aria-label="Datos destacados">
+                <div class="stat">
+                    <strong>+100</strong>
+                    <span>productos en catálogo público</span>
+                </div>
+                <div class="stat">
+                    <strong>Stock</strong>
+                    <span>bultos y unidades visibles</span>
+                </div>
+                <div class="stat">
+                    <strong>Carrito</strong>
+                    <span>pedido final por WhatsApp</span>
+                </div>
+                <div class="stat">
+                    <strong>Retiro</strong>
+                    <span>por el local con confirmación</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="categorias" class="band categories">
+            <div class="inner">
+                <div class="section-head">
+                    <h2>Productos para hogares, compras grandes y reposición familiar.</h2>
+                </div>
+
+                <div class="grid">
+                    <a class="category" href="segunda.html?categoria=ALMACEN">
+                        <div class="icon">A</div>
+                        <div>
+                            <h3>Almacén</h3>
+                            <p>Fideos, arroz, harinas, legumbres, azúcar, yerba, conservas y productos secos.</p>
+                        </div>
+                    </a>
+                    <a class="category" href="segunda.html?categoria=GASEOSAS">
+                        <div class="icon">B</div>
+                        <div>
+                            <h3>Bebidas</h3>
+                            <p>Gaseosas, aguas, jugos, energizantes y presentaciones para consumo familiar.</p>
+                        </div>
+                    </a>
+                    <a class="category" href="segunda.html?categoria=SNACK">
+                        <div class="icon">S</div>
+                        <div>
+                            <h3>Snacks y golosinas</h3>
+                            <p>Opciones para eventos, cumpleaños, reuniones y compras por cantidad.</p>
+                        </div>
+                    </a>
+                    <article class="category">
+                        <div class="icon">F</div>
+                        <div>
+                            <h3>Lácteos y frescos</h3>
+                            <p>Según disponibilidad, productos refrigerados y líneas de alta rotación.</p>
+                        </div>
+                    </article>
+                    <a class="category" href="segunda.html?categoria=LIMPIEZA">
+                        <div class="icon">L</div>
+                        <div>
+                            <h3>Limpieza</h3>
+                            <p>Artículos básicos para el hogar y reposición diaria.</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="publico" class="band">
+            <div class="inner split">
+                <div class="public-box">
+                    <span class="eyebrow">Nueva atención</span>
+                    <h2>Compra para retirar, sin esperar reparto.</h2>
+                    <p>Elegí los productos del catálogo, agregalos al carrito y mandá el pedido por WhatsApp. Te confirmamos stock, total y horario de retiro.</p>
+                    <ul class="check-list">
+                        <li>Compras para el hogar, familias, eventos y grupos.</li>
+                        <li>Precios públicos separados de la lista para vendedores.</li>
+                        <li>Confirmación por WhatsApp antes de retirar.</li>
+                    </ul>
+                </div>
+
+                <div id="pedidos" class="steps">
+                    <article class="step">
+                        <span class="step-number">1</span>
+                        <h3>Armá el carrito</h3>
+                        <p>Buscá productos por rubro, elegí cantidades y agregalos a tu pedido.</p>
+                    </article>
+                    <article class="step">
+                        <span class="step-number">2</span>
+                        <h3>Mandalo por WhatsApp</h3>
+                        <p>El carrito se convierte en un mensaje con productos, cantidades y precios de referencia.</p>
+                    </article>
+                    <article class="step">
+                        <span class="step-number">3</span>
+                        <h3>Retirá por el local</h3>
+                        <p>Pasá a retirar cuando el equipo confirme stock, total final y horario disponible.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="contacto" class="band contact">
+            <div class="inner">
+                <div class="section-head">
+                    <h2>Consultá tu pedido o las ofertas del día.</h2>
+                    <p>Atención para venta al público con retiro. Los pedidos de comercios con vendedor se gestionan por otro circuito.</p>
+                </div>
+
+                <div class="contact-grid">
+                    <article class="contact-box">
+                        <h3>WhatsApp</h3>
+                        <p><a href="https://wa.link/eja7i2">+54 9 341 744-8207</a></p>
+                    </article>
+                    <article class="contact-box">
+                        <h3>Dirección</h3>
+                        <p>Av. Principal 1234, Ciudad</p>
+                    </article>
+                    <article class="contact-box">
+                        <h3>Horario</h3>
+                        <p>Lunes a sábado de 8:00 a 18:00</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Grupo Mercado Mayorista. Venta al público con retiro por el local.
+    </footer>
+</body>
+</html>

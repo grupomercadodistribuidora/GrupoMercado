@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo | Grupo Mercado Mayorista</title>
+    <style>
+        :root {
+            --bg: #f5f8fb;
+            --surface: #ffffff;
+            --text: #17192f;
+            --muted: #5c6477;
+            --blue: #287db8;
+            --navy: #292963;
+            --navy-dark: #171742;
+            --danger: #b83446;
+            --accent: #23a6df;
+            --line: #d9e2ec;
+            --soft: #eef7ff;
+            --shadow: 0 18px 45px rgba(23, 25, 47, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            padding: 14px clamp(18px, 4vw, 56px);
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid var(--line);
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1.05;
+        }
+
+        .brand img {
+            width: 78px;
+            flex: 0 0 auto;
+            height: auto;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .topbar a,
+        .cart-toggle {
+            color: var(--blue);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .cart-toggle {
+            min-height: 40px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 8px 12px;
+            background: #ffffff;
+        }
+
+        .hero,
+        .band {
+            padding: clamp(34px, 6vw, 72px) clamp(18px, 4vw, 56px);
+        }
+
+        .hero {
+            background: var(--navy-dark);
+            color: #ffffff;
+        }
+
+        .inner {
+            width: min(1220px, 100%);
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            max-width: 840px;
+            margin: 0 0 16px;
+            font-size: clamp(2.1rem, 5vw, 4.4rem);
+            line-height: 1;
+        }
+
+        .hero p {
+            max-width: 760px;
+            margin: 0;
+            color: #dce6df;
+            line-height: 1.7;
+        }
+
+        .mobile-cart-bar {
+            display: none;
+        }
+
+        .shop-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 340px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .toolbar {
+            display: grid;
+            grid-template-columns: 1fr 230px;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .search,
+        .select {
+            min-height: 48px;
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: #ffffff;
+            color: var(--text);
+        }
+
+        .search {
+            padding: 0 16px;
+        }
+
+        .select {
+            padding: 0 12px;
+        }
+
+        .meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 18px;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .filter {
+            flex: 0 0 auto;
+            min-height: 38px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            padding: 8px 12px;
+            background: #ffffff;
+            color: var(--muted);
+            font-weight: 800;
+        }
+
+        .filter.active {
+            border-color: var(--blue);
+            background: var(--blue);
+            color: #ffffff;
+        }
+
+        .catalog {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .product {
+            min-height: 320px;
+            display: grid;
+            grid-template-rows: 154px auto;
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--surface);
+        }
+
+        .product-image {
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #eef7ff, #ffffff);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 12px;
+        }
+
+        .product-fallback {
+            width: 76px;
+            height: 76px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--navy);
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
+
+        .product-content {
+            display: grid;
+            gap: 14px;
+            padding: 16px;
+        }
+
+        .tag {
+            width: fit-content;
+            max-width: 100%;
+            padding: 5px 8px;
+            border-radius: 999px;
+            background: var(--soft);
+            color: var(--blue);
+            font-size: 0.76rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product h2 {
+            min-height: 44px;
+            margin: 0;
+            font-size: 1.08rem;
+            line-height: 1.3;
+        }
+
+        .product-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        .datum {
+            padding: 11px;
+            border-radius: 6px;
+            background: #f8fafc;
+        }
+
+        .datum span {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--muted);
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .datum strong {
+            display: block;
+            font-size: 1.03rem;
+            line-height: 1.2;
+        }
+
+        .stock.ok strong {
+            color: var(--blue);
+        }
+
+        .stock.empty strong {
+            color: var(--danger);
+        }
+
+        .buy-row {
+            display: grid;
+            grid-template-columns: 82px 1fr;
+            gap: 10px;
+        }
+
+        .quantity {
+            min-height: 42px;
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 0 8px;
+        }
+
+        .add {
+            min-height: 42px;
+            border: 0;
+            border-radius: 6px;
+            background: var(--blue);
+            color: #ffffff;
+            font-weight: 900;
+        }
+
+        .add:disabled {
+            background: #aab7c5;
+            cursor: not-allowed;
+        }
+
+        .cart {
+            position: sticky;
+            top: 86px;
+            display: grid;
+            gap: 14px;
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+            box-shadow: var(--shadow);
+        }
+
+        .cart h2 {
+            margin: 0;
+            font-size: 1.35rem;
+        }
+
+        .cart-list {
+            display: grid;
+            gap: 10px;
+            max-height: 430px;
+            overflow: auto;
+        }
+
+        .cart-item {
+            display: grid;
+            gap: 8px;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .cart-item strong {
+            line-height: 1.3;
+        }
+
+        .cart-item small {
+            color: var(--muted);
+        }
+
+        .cart-controls {
+            display: grid;
+            grid-template-columns: 36px 1fr 36px 36px;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .cart-controls button {
+            min-height: 34px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: #ffffff;
+            color: var(--navy);
+            font-weight: 900;
+        }
+
+        .cart-controls span {
+            text-align: center;
+            font-weight: 900;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+            font-weight: 900;
+        }
+
+        .checkout,
+        .clear-cart {
+            min-height: 46px;
+            border-radius: 6px;
+            font-weight: 900;
+        }
+
+        .checkout {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--navy);
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .checkout.disabled {
+            pointer-events: none;
+            background: #aab7c5;
+        }
+
+        .clear-cart {
+            border: 1px solid var(--line);
+            background: #ffffff;
+            color: var(--muted);
+        }
+
+        .empty-cart,
+        .empty-state {
+            color: var(--muted);
+            line-height: 1.55;
+        }
+
+        .empty-state {
+            display: none;
+            padding: 28px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #ffffff;
+        }
+
+        .empty-state.show {
+            display: block;
+        }
+
+        .note {
+            margin-top: 20px;
+            padding: 18px;
+            border-left: 5px solid var(--accent);
+            background: #eef8ff;
+            color: var(--navy);
+            line-height: 1.55;
+        }
+
+        footer {
+            padding: 20px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        @media (max-width: 1040px) {
+            .shop-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .cart {
+                position: static;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .topbar,
+            .toolbar,
+            .meta {
+                display: grid;
+            }
+
+            .topbar {
+                position: static;
+                padding: 12px 16px;
+            }
+
+            .brand {
+                align-items: center;
+                font-size: 0.9rem;
+            }
+
+            .brand img {
+                width: 68px;
+            }
+
+            .top-actions {
+                justify-content: space-between;
+            }
+
+            .topbar a,
+            .cart-toggle {
+                min-height: 42px;
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .hero,
+            .band {
+                padding: 28px 16px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+                line-height: 1.04;
+            }
+
+            .hero p {
+                font-size: 0.98rem;
+            }
+
+            .filters {
+                margin-right: -16px;
+                padding-right: 16px;
+            }
+
+            .catalog {
+                grid-template-columns: 1fr;
+            }
+
+            .product {
+                min-height: 0;
+                grid-template-rows: 122px auto;
+            }
+
+            .product-content {
+                padding: 14px;
+            }
+
+            .product h2 {
+                min-height: 0;
+            }
+
+            .cart {
+                gap: 12px;
+                padding: 14px;
+                box-shadow: none;
+            }
+
+            .cart-list {
+                max-height: none;
+            }
+
+            .mobile-cart-bar {
+                position: sticky;
+                bottom: 0;
+                z-index: 8;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 14px;
+                background: var(--navy);
+                color: #ffffff;
+                box-shadow: 0 -10px 28px rgba(23, 25, 47, 0.22);
+            }
+
+            .mobile-cart-bar button {
+                min-height: 40px;
+                border: 0;
+                border-radius: 6px;
+                padding: 8px 12px;
+                background: #ffffff;
+                color: var(--navy);
+                font-weight: 900;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-body,
+            .buy-row {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-controls {
+                grid-template-columns: 40px 1fr 40px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">
+            <img src="assets/logo-gmm-cropped.png" alt="Grupo Mercado Mayorista">
+            <span>Catálogo público</span>
+        </div>
+        <div class="top-actions">
+            <a href="index.html">Inicio</a>
+            <button class="cart-toggle" type="button" data-scroll-cart>Carrito: <span id="cartCountTop">0</span></button>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="inner">
+                <h1>Elegí productos, armá tu carrito y retiralo por el local.</h1>
+                <p>Estos precios corresponden a venta al público con retiro. Los comercios atendidos por vendedores manejan otra lista de precios.</p>
+            </div>
+        </section>
+
+        <section class="band">
+            <div class="inner shop-layout">
+                <div>
+                    <div class="toolbar">
+                        <input id="search" class="search" type="search" placeholder="Buscar producto, marca o presentación">
+                        <select id="availability" class="select" aria-label="Filtrar por disponibilidad">
+                            <option value="all">Todos los productos</option>
+                            <option value="available">Solo con stock</option>
+                            <option value="missing">Sin stock / consultar</option>
+                        </select>
+                    </div>
+
+                    <div class="meta">
+                        <span id="summary">Cargando catálogo...</span>
+                        <div id="filters" class="filters" aria-label="Categorías"></div>
+                    </div>
+
+                    <div id="catalog" class="catalog"></div>
+                    <div id="empty" class="empty-state">No encontramos productos con esos filtros. Probá con otra búsqueda o categoría.</div>
+
+                    <p class="note">La hoja de cálculo es la base de productos, precios y stock. Para agregar imágenes, sumá una columna <strong>IMAGEN</strong> con una URL o una ruta como <strong>assets/productos/yerba-playadito.png</strong> y ejecutá <strong>actualizar-catalogo.ps1</strong>.</p>
+                </div>
+
+                <aside id="cart" class="cart" aria-label="Carrito de compra">
+                    <h2>Tu carrito</h2>
+                    <div id="cartList" class="cart-list"></div>
+                    <div class="cart-total">
+                        <span>Total</span>
+                        <span id="cartTotal">A confirmar</span>
+                    </div>
+                    <a id="checkout" class="checkout disabled" href="#" target="_blank" rel="noopener">Finalizar por WhatsApp</a>
+                    <button id="clearCart" class="clear-cart" type="button">Vaciar carrito</button>
+                    <p class="empty-cart">El pedido se envía por WhatsApp para confirmar stock, total final y horario de retiro.</p>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Grupo Mercado Mayorista. Venta al público con retiro por el local.
+    </footer>
+
+    <div class="mobile-cart-bar">
+        <strong>Carrito: <span id="cartCountMobile">0</span></strong>
+        <button type="button" data-scroll-cart>Ver carrito</button>
+    </div>
+
+    <script src="catalogo-data.js"></script>
+    <script>
+        const products = (window.CATALOGO_PRODUCTOS || []).map((product, index) => ({
+            ...product,
+            id: String(product.id || `${product.categoria}-${product.producto}-${index}`)
+        }));
+        const whatsappNumber = "5493417448207";
+        const cart = new Map();
+        const requestedCategory = new URLSearchParams(window.location.search).get("categoria");
+        const availableCategories = Array.from(new Set(products.map((item) => item.categoria))).sort();
+        const initialCategory = availableCategories.includes(requestedCategory) ? requestedCategory : "Todas";
+        const state = {
+            category: initialCategory,
+            query: "",
+            availability: "all"
+        };
+
+        const catalog = document.querySelector("#catalog");
+        const filters = document.querySelector("#filters");
+        const search = document.querySelector("#search");
+        const availability = document.querySelector("#availability");
+        const summary = document.querySelector("#summary");
+        const empty = document.querySelector("#empty");
+        const cartList = document.querySelector("#cartList");
+        const cartTotal = document.querySelector("#cartTotal");
+        const checkout = document.querySelector("#checkout");
+        const clearCart = document.querySelector("#clearCart");
+        const cartCountTop = document.querySelector("#cartCountTop");
+        const cartCountMobile = document.querySelector("#cartCountMobile");
+
+        function normalize(value) {
+            return String(value || "")
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+        }
+
+        function escapeHtml(value) {
+            return String(value || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function stockText(product) {
+            if (!product.disponible) {
+                return "Consultar";
+            }
+
+            const parts = [];
+            if (product.bultos > 0) {
+                parts.push(`${product.bultos} bulto${product.bultos === 1 ? "" : "s"}`);
+            }
+            if (product.unidades > 0) {
+                parts.push(`${product.unidades} unidad${product.unidades === 1 ? "" : "es"}`);
+            }
+
+            return parts.length ? parts.join(" + ") : "Con stock";
+        }
+
+        function productImage(product) {
+            return product.imagen || product.image || product.foto || "";
+        }
+
+        function productInitial(product) {
+            return normalize(product.producto).charAt(0).toUpperCase() || "G";
+        }
+
+        function matches(product) {
+            const text = normalize(`${product.producto} ${product.categoria}`);
+            const queryOk = !state.query || text.includes(normalize(state.query));
+            const categoryOk = state.category === "Todas" || product.categoria === state.category;
+            const availabilityOk =
+                state.availability === "all" ||
+                (state.availability === "available" && product.disponible) ||
+                (state.availability === "missing" && !product.disponible);
+
+            return queryOk && categoryOk && availabilityOk;
+        }
+
+        function renderFilters() {
+            const categories = ["Todas", ...availableCategories];
+            filters.innerHTML = categories.map((category) => `
+                <button class="filter${category === state.category ? " active" : ""}" type="button" data-category="${escapeHtml(category)}">
+                    ${escapeHtml(category)}
+                </button>
+            `).join("");
+        }
+
+        function renderCatalog() {
+            const visible = products.filter(matches);
+            const availableCount = visible.filter((product) => product.disponible).length;
+
+            summary.textContent = `${visible.length} productos encontrados · ${availableCount} con stock`;
+            empty.classList.toggle("show", visible.length === 0);
+
+            catalog.innerHTML = visible.map((product) => {
+                const image = productImage(product);
+                const disabled = product.disponible ? "" : "disabled";
+
+                return `
+                    <article class="product">
+                        <div class="product-image">
+                            ${image
+                                ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(product.producto)}">`
+                                : `<div class="product-fallback">${escapeHtml(productInitial(product))}</div>`
+                            }
+                        </div>
+                        <div class="product-content">
+                            <span class="tag" title="${escapeHtml(product.categoria)}">${escapeHtml(product.categoria)}</span>
+                            <h2>${escapeHtml(product.producto)}</h2>
+                            <div class="product-body">
+                                <div class="datum">
+                                    <span>Precio público</span>
+                                    <strong>${escapeHtml(product.precio)}</strong>
+                                </div>
+                                <div class="datum stock ${product.disponible ? "ok" : "empty"}">
+                                    <span>Stock</span>
+                                    <strong>${escapeHtml(stockText(product))}</strong>
+                                </div>
+                            </div>
+                            <div class="buy-row">
+                                <input class="quantity" type="number" min="1" value="1" aria-label="Cantidad de ${escapeHtml(product.producto)}" data-qty="${escapeHtml(product.id)}" ${disabled}>
+                                <button class="add" type="button" data-add="${escapeHtml(product.id)}" ${disabled}>Agregar</button>
+                            </div>
+                        </div>
+                    </article>
+                `;
+            }).join("");
+        }
+
+        function cartItems() {
+            return Array.from(cart.values());
+        }
+
+        function renderCart() {
+            const items = cartItems();
+            const count = items.reduce((total, item) => total + item.quantity, 0);
+            cartCountTop.textContent = count;
+            cartCountMobile.textContent = count;
+            cartTotal.textContent = items.length ? "A confirmar" : "$0";
+
+            if (!items.length) {
+                cartList.innerHTML = '<p class="empty-cart">Todavía no agregaste productos.</p>';
+                checkout.classList.add("disabled");
+                checkout.href = "#";
+                return;
+            }
+
+            cartList.innerHTML = items.map((item) => `
+                <div class="cart-item">
+                    <strong>${escapeHtml(item.product.producto)}</strong>
+                    <small>${escapeHtml(item.product.categoria)} · ${escapeHtml(item.product.precio)} · ${escapeHtml(stockText(item.product))}</small>
+                    <div class="cart-controls">
+                        <button type="button" data-minus="${escapeHtml(item.product.id)}">-</button>
+                        <span>${item.quantity}</span>
+                        <button type="button" data-plus="${escapeHtml(item.product.id)}">+</button>
+                        <button type="button" data-remove="${escapeHtml(item.product.id)}">×</button>
+                    </div>
+                </div>
+            `).join("");
+
+            checkout.classList.remove("disabled");
+            checkout.href = whatsappUrl(items);
+        }
+
+        function whatsappUrl(items) {
+            const lines = [
+                "Hola, quiero hacer este pedido para retirar por el local:",
+                "",
+                ...items.map((item, index) => `${index + 1}. ${item.product.producto} x ${item.quantity} - ${item.product.precio}`),
+                "",
+                "Quedo atento a confirmación de stock, total final y horario."
+            ];
+
+            return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(lines.join("\n"))}`;
+        }
+
+        function addToCart(productId, quantity) {
+            const product = products.find((item) => item.id === productId);
+            if (!product || !product.disponible) {
+                return;
+            }
+
+            const current = cart.get(productId);
+            const safeQuantity = Math.max(1, Number(quantity) || 1);
+            cart.set(productId, {
+                product,
+                quantity: current ? current.quantity + safeQuantity : safeQuantity
+            });
+            renderCart();
+        }
+
+        filters.addEventListener("click", (event) => {
+            const button = event.target.closest("button[data-category]");
+            if (!button) {
+                return;
+            }
+
+            state.category = button.dataset.category;
+            renderFilters();
+            renderCatalog();
+        });
+
+        catalog.addEventListener("click", (event) => {
+            const button = event.target.closest("button[data-add]");
+            if (!button) {
+                return;
+            }
+
+            const productId = button.dataset.add;
+            const quantityInput = Array.from(catalog.querySelectorAll("[data-qty]"))
+                .find((input) => input.dataset.qty === productId);
+            addToCart(productId, quantityInput?.value || 1);
+        });
+
+        cartList.addEventListener("click", (event) => {
+            const minus = event.target.closest("button[data-minus]");
+            const plus = event.target.closest("button[data-plus]");
+            const remove = event.target.closest("button[data-remove]");
+            const id = minus?.dataset.minus || plus?.dataset.plus || remove?.dataset.remove;
+
+            if (!id || !cart.has(id)) {
+                return;
+            }
+
+            const item = cart.get(id);
+            if (plus) {
+                item.quantity += 1;
+            }
+            if (minus) {
+                item.quantity -= 1;
+                if (item.quantity <= 0) {
+                    cart.delete(id);
+                }
+            }
+            if (remove) {
+                cart.delete(id);
+            }
+
+            renderCart();
+        });
+
+        clearCart.addEventListener("click", () => {
+            cart.clear();
+            renderCart();
+        });
+
+        document.querySelectorAll("[data-scroll-cart]").forEach((button) => {
+            button.addEventListener("click", () => {
+                document.querySelector("#cart").scrollIntoView({ behavior: "smooth", block: "start" });
+            });
+        });
+
+        search.addEventListener("input", () => {
+            state.query = search.value;
+            renderCatalog();
+        });
+
+        availability.addEventListener("change", () => {
+            state.availability = availability.value;
+            renderCatalog();
+        });
+
+        renderFilters();
+        renderCatalog();
+        renderCart();
+    </script>
+</body>
+</html>
